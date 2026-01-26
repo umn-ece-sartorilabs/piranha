@@ -1,7 +1,11 @@
 
 #include "unitTests.h"
 
+// Forward declare the dummy function
+extern void registerBenchmarkTests();
+
 int runTests(int argc, char **argv) {
+    registerBenchmarkTests(); // Force linkage
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
@@ -149,4 +153,3 @@ TEST(FPCTest, Mult) {
     FPC<uint64_t> expected = {38};
     assertShare(a, expected, false);
 }
-
