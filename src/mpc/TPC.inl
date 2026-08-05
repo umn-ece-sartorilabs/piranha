@@ -459,12 +459,13 @@ void sum_and_reduce(const TPC<T> &a, const TPC<T> &b, TPC<T> &c, TPC<T> &result)
     // Step 2: Perform reduction to get final sum
     // Initialize result to zero
     result.zero();
-    
-    // Add all elements from c into result
-    // We can use existing operator to accumulate
-    for (size_t i = 0; i < c.size(); i++) {
-        result += *c.getShare(0);
-    }
+
+    // Reduce each local share of c independently (additive sharing: summing
+    // shares locally is equivalent to summing the secret values).
+    T sum = thrust::reduce(c.getShare(0)->begin(), c.getShare(0)->end(), (T)0);
+    DeviceData<T> outVal(1);
+    outVal.fill(sum);
+    result += outVal;
 }
 
 template<typename T, typename U, typename I, typename I2, typename I3, typename I4>
